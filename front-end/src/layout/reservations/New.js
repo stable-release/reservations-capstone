@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import { createReservation } from "../../utils/api";
 import ReservationForm from "../forms/ReservationForm";
+import ErrorAlert from "../ErrorAlert";
 
 function addZero(n) {
     if (n < 10) {
@@ -35,6 +36,8 @@ export default function NewReservation() {
         reservation_time: "00:00",
         people: Number(""),
     });
+    const [formDataError, setFormDataError] = useState(null);
+    const [responseError, setResponseError] = useState(null);
 
     /**
      * 0 default
@@ -70,7 +73,13 @@ export default function NewReservation() {
             ...formData,
             [target.name]: parseInt(value),
         });
-    }
+    };
+
+    const errorAlerts = formDataError
+        ? formDataError.map((err) => {
+              return <ErrorAlert key={err.key} error={err} />;
+          })
+        : null;
 
     /**
      * Default Time & Date
@@ -91,18 +100,72 @@ export default function NewReservation() {
      * Create call to API
      */
     useEffect(() => {
-        if (submitted === 1) {
-            createReservation(formData).then(() =>
+        let formattedNumber = "";
+        const validateForm = (reservation_date, reservation_time) => {
+            const errArr = [];
+            const d = new Date(`${reservation_date}T${reservation_time}`);
+            if (d.getDay() === 2) {
+                errArr.push({
+                    key: "Closed",
+                    message: "Sorry, we are closed on Tuesdays",
+                });
+            }
+
+            if (Date.now() >= d.getTime()) {
+                errArr.push({
+                    key: "Past",
+                    message: "Date must be in the future",
+                });
+            }
+
+            if (errArr.length) {
+                setFormDataError(() => [...errArr]);
+                return false;
+            }
+
+            // Phone validation
+            const phone = formData.mobile_number;
+            let finalString = "";
+            for (let i in phone) {
+                if (/\d/.test(phone[i])) {
+                    finalString += phone[i];
+                }
+                if (finalString.length === 3 || finalString.length === 7) {
+                    finalString += "-";
+                }
+            }
+
+            if (finalString.length !== 12) {
+                return false;
+            }
+
+            formattedNumber = finalString;
+
+            return true;
+        };
+
+        if (
+            submitted === 1 &&
+            validateForm(formData.reservation_date, formData.reservation_time)
+        ) {
+            const data = {
+                ...formData,
+                mobile_number: formattedNumber
+            }
+            createReservation(data).then(() =>
                 history.push(`/dashboard?date=${formData.reservation_date}`)
-            );
+            ).catch((error) => setResponseError(error));
         } else if (submitted === 2) {
             history.goBack();
         }
+
         return () => setSubmitted(() => 0);
-    }, [submitted, history, formData]);
+    }, [submitted, history, formData, formDataError]);
 
     return (
         <div>
+            {responseError ? <ErrorAlert error={responseError} /> : ""}
+            {errorAlerts}
             <ReservationForm
                 setFormData={setFormData}
                 formData={formData}

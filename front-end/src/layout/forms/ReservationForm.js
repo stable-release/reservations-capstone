@@ -34,7 +34,6 @@ export default function ReservationForm({
                     type="tel"
                     value={formData.mobile_number}
                     onChange={handleChange}
-                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                     required={true}
                 />
                 <label htmlFor="reservation_date">Reservation Date</label>

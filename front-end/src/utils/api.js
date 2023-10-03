@@ -88,8 +88,12 @@ export async function createReservation(params) {
             headers: headers,
         });
 
-        const data = await response.json();
-        return data;
+        const payload = await response.json();
+
+        if (payload.error) {
+            return Promise.reject({ message: payload.error });
+        }
+        return payload.data;
     } catch (err) {
         abortController.abort(err);
     }
@@ -101,7 +105,7 @@ export async function listDateReservations(date) {
         const response = await fetch(
             `${API_BASE_URL}/reservations?date=${date}`,
             {
-                method: "GET"
+                method: "GET",
             }
         );
         const { data } = await response.json();
