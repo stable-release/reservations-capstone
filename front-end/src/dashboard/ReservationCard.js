@@ -1,4 +1,4 @@
-export default function ReservationCard({ first, last, time, date, people, contact}) {
+export default function ReservationCard({ first, last, time, date, people, contact }) {
     return (
             <tr>
                 <td>{first}</td>

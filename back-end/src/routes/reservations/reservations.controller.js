@@ -70,8 +70,7 @@ async function validFirstName(req, res, next) {
  * Last name not empty
  */
 async function validLastName(req, res, next) {
-    let alpha = /^[a-zA-Z]+$/;
-    if (res.locals.last_name.length > 0 && alpha.test(res.locals.last_name)) {
+    if (res.locals.last_name.length > 0) {
         return next();
     }
     next({
@@ -133,7 +132,6 @@ async function validTime(req, res, next) {
             });
         }
     }
-
     next();
 }
 
@@ -161,7 +159,6 @@ async function validPeople(req, res, next) {
             status: 400,
         });
     }
-
     next();
 }
 

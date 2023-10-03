@@ -68,7 +68,8 @@ export async function listReservations(params, signal) {
         .then(formatReservationTime);
 }
 
-export async function createReservation(params, signal) {
+export async function createReservation(params) {
+    const abortController = new AbortController();
     try {
         const headers = {
             Accept: "*/*",
@@ -88,13 +89,14 @@ export async function createReservation(params, signal) {
         });
 
         const data = await response.json();
-        console.log(data.response);
+        return data;
     } catch (err) {
-        signal.abort(err);
+        abortController.abort(err);
     }
 }
 
-export async function listDateReservations(date, signal) {
+export async function listDateReservations(date) {
+    const abortController = new AbortController();
     try {
         const response = await fetch(
             `${API_BASE_URL}/reservations?date=${date}`,
@@ -102,9 +104,9 @@ export async function listDateReservations(date, signal) {
                 method: "GET"
             }
         );
-        const data = await response.json();
+        const { data } = await response.json();
         return data;
     } catch (err) {
-        signal.abort(err);
+        abortController.abort(err);
     }
 }

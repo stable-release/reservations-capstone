@@ -21,7 +21,7 @@ function todayTime() {
     const currentDate = new Date();
     return `${addZero(currentDate.getHours())}:${addZero(
         currentDate.getMinutes()
-    )}:${addZero(currentDate.getSeconds())}`;
+    )}`;
 }
 
 export default function NewReservation() {
@@ -30,10 +30,10 @@ export default function NewReservation() {
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
-        mobile_number: "123 456 7890",
+        mobile_number: "",
         reservation_date: "",
-        reservation_time: "",
-        people: "0",
+        reservation_time: "00:00",
+        people: Number(""),
     });
 
     /**
@@ -64,34 +64,35 @@ export default function NewReservation() {
         });
     };
 
-    const handleTimeChange = ({ target }) => {
-        const time = target.value;
+    const handlePeople = ({ target }) => {
+        const value = target.value;
         setFormData({
             ...formData,
-            reservation_time: `${time}:00`,
+            [target.name]: parseInt(value),
         });
-    };
+    }
 
     /**
      * Default Time & Date
      */
     useEffect(() => {
-        const currentTime = todayTime();
-        const currentDate = todayDate();
-        setFormData({
-            ...formData,
-            reservation_time: currentTime,
-            reservation_date: currentDate,
-        });
-    }, []);
+        if (!formData.reservation_date) {
+            const currentTime = todayTime();
+            const currentDate = todayDate();
+            setFormData({
+                ...formData,
+                reservation_time: currentTime,
+                reservation_date: currentDate,
+            });
+        }
+    }, [formData]);
 
     /**
      * Create call to API
      */
     useEffect(() => {
-        const abortController = new AbortController();
         if (submitted === 1) {
-            createReservation(formData, abortController).then(
+            createReservation(formData).then(() =>
                 history.push(`/dashboard?date=${formData.reservation_date}`)
             );
         } else if (submitted === 2) {
@@ -108,7 +109,7 @@ export default function NewReservation() {
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
                 handleCancel={handleCancel}
-                handleTimeChange={handleTimeChange}
+                handlePeople={handlePeople}
             />
         </div>
     );
