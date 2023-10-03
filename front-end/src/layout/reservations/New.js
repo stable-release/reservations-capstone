@@ -102,6 +102,7 @@ export default function NewReservation() {
     useEffect(() => {
         let formattedNumber = "";
         const validateForm = (reservation_date, reservation_time) => {
+            // Date and Time Validation
             const errArr = [];
             const d = new Date(`${reservation_date}T${reservation_time}`);
             if (d.getDay() === 2) {
