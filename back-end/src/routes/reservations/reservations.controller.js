@@ -136,6 +136,30 @@ async function validTime(req, res, next) {
 }
 
 /**
+ * DateTime not past or on closed days
+ */
+async function validDateTime(req, res, next) {
+    const d = new Date(
+        `${res.locals.reservation_date}T${res.locals.reservation_time}`
+    );
+    
+    if (d.getDay() === 2) {
+        return next({
+            message: "Sorry, we're closed on Tuesdays",
+            status: 400,
+        })
+    }
+    if (Date.now() >= d.getTime()) {
+        return next({
+            message: "Reservation must be in the future",
+            status: 400,
+        })
+    }
+
+    next();
+}
+
+/**
  * Valid number of people
  */
 async function validPeople(req, res, next) {
@@ -198,6 +222,7 @@ module.exports = {
         asyncErrorBoundary(validPhone),
         asyncErrorBoundary(validDate),
         asyncErrorBoundary(validTime),
+        asyncErrorBoundary(validDateTime),
         asyncErrorBoundary(validPeople),
         asyncErrorBoundary(create),
     ],
