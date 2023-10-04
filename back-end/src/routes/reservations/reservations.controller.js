@@ -140,7 +140,7 @@ async function validTime(req, res, next) {
  */
 async function validDateTime(req, res, next) {
     const d = new Date(
-        `${res.locals.reservation_date}T${res.locals.reservation_time}`
+        `${res.locals.reservation_date}T${res.locals.reservation_time}z`
     );
     
     if (d.getDay() === 2) {
@@ -152,6 +152,26 @@ async function validDateTime(req, res, next) {
     if (Date.now() >= d.getTime()) {
         return next({
             message: "Reservation must be in the future",
+            status: 400,
+        })
+    }
+
+    const f = new Date(`${res.locals.reservation_date}T${res.locals.reservation_time}`);
+
+    const morning_minimum = new Date(`${res.locals.reservation_date}T10:30`);
+
+    if (f.getTime() < morning_minimum.getTime()) {
+        return next({
+            message: "We open at 10:30 AM",
+            status: 400,
+        })
+    }
+
+    const evening_maximum = new Date(`${res.locals.reservation_date}T21:30`);
+
+    if (f.getTime() > evening_maximum.getTime()) {
+        return next({
+            message: "Our kitchen closes at 9:30 PM",
             status: 400,
         })
     }
@@ -187,21 +207,21 @@ async function validPeople(req, res, next) {
 }
 
 /**
- * Date query validaiton
- */
-async function dateExists(req, res, next) {
-    const date = req.query.date ? req.query.date : today();
-    res.locals.date = date;
-    next();
-}
-
-/**
  * Create handler for new reservations
  */
 async function create(req, res, next) {
     const { data } = req.body;
     const response = await reservationsService.create(data);
     res.status(201).json({ data: response });
+}
+
+/**
+ * Date query validaiton
+ */
+async function dateExists(req, res, next) {
+    const date = req.query.date ? req.query.date : today();
+    res.locals.date = date;
+    next();
 }
 
 /**

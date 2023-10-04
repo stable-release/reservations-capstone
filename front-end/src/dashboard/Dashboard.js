@@ -89,8 +89,8 @@ function Dashboard() {
                         <tr>
                             <th>First Name</th>
                             <th>Last Name</th>
-                            <th>Reservation Time</th>
-                            <th>Reservation Date</th>
+                            <th>Reservation Time (UTC)</th>
+                            <th>Reservation Date (UTC)</th>
                             <th>Number of People</th>
                             <th>Contact Number</th>
                         </tr>

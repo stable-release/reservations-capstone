@@ -3,13 +3,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import { createReservation } from "../../utils/api";
 import ReservationForm from "../forms/ReservationForm";
 import ErrorAlert from "../ErrorAlert";
-
-function addZero(n) {
-    if (n < 10) {
-        n = "0" + n;
-    }
-    return n;
-}
+const { addZero } = require("../../utils/addZero");
 
 function todayDate() {
     const currentDate = new Date();
@@ -101,10 +95,39 @@ export default function NewReservation() {
      */
     useEffect(() => {
         let formattedNumber = "";
+        let formattedDate = "";
+        let formattedTime = "";
+        
         const validateForm = (reservation_date, reservation_time) => {
-            // Date and Time Validation
             const errArr = [];
+
+            // Date and Time Validation
+            // By default, new Date() creates a Date object using time on local computer
+            // Date() object needs to be converted to UTC for accurate comparisons
             const d = new Date(`${reservation_date}T${reservation_time}`);
+
+            formattedDate = `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`;
+            formattedTime = `${addZero(d.getUTCHours())}:${addZero(d.getUTCMinutes())}`;
+
+            // Open at 10:30 AM
+            const morning_minimum = new Date(`${reservation_date}T10:30`);
+
+            if (d.getTime() < morning_minimum.getTime()) {
+                errArr.push({
+                    key: "Time",
+                    message: "We open at 10:30 AM"
+                })
+            }
+
+            // Close at 9:30 PM
+            const evening_maximum = new Date(`${reservation_date}T21:30`);
+            if (d.getTime() > evening_maximum.getTime()) {
+                errArr.push({
+                    key: "Time",
+                    message: "Our kitchen closes at 9:30 PM"
+                })
+            }
+
             if (d.getDay() === 2) {
                 errArr.push({
                     key: "Closed",
@@ -151,10 +174,14 @@ export default function NewReservation() {
         ) {
             const data = {
                 ...formData,
-                mobile_number: formattedNumber
+                mobile_number: formattedNumber,
+                reservation_date: formattedDate,
+                reservation_time: formattedTime,
             }
+            console.log(data);
+
             createReservation(data).then(() =>
-                history.push(`/dashboard?date=${formData.reservation_date}`)
+                history.push(`/dashboard?date=${formattedDate}`)
             ).catch((error) => setResponseError(error));
         } else if (submitted === 2) {
             history.goBack();
