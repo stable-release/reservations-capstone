@@ -1,9 +1,9 @@
 const { addZero } = require("../utils/addZero");
 
 export default function ReservationCard({ first, last, time, date, people, contact }) {
-    const DateUTC = new Date(`${date}T${time}z`);
-    const formattedTime = `${addZero(DateUTC.getUTCHours())}:${addZero(DateUTC.getUTCMinutes())}`;
-    const formattedDate = `${DateUTC.getUTCFullYear()}-${DateUTC.getUTCMonth()+1}-${DateUTC.getUTCDate()}`;
+    const DateUTC = new Date(`${date}T${time}`);
+    const formattedTime = `${addZero(DateUTC.getHours())}:${addZero(DateUTC.getMinutes())}`;
+    const formattedDate = `${DateUTC.getFullYear()}-${DateUTC.getMonth()+1}-${DateUTC.getDate()}`;
     return (
             <tr>
                 <td>{first}</td>

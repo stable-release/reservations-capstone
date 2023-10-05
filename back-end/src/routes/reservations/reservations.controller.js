@@ -2,6 +2,7 @@ const asyncErrorBoundary = require("../../errors/asyncErrorBoundary");
 const reservationsService = require("./reservations.service");
 const hasProperties = require("../../errors/hasProperties");
 const today = require("../../utils/today");
+const { addZero } = require("../../utils/addZero");
 
 /**
  * Property validation containing only VALID_PROPERTIES
@@ -14,21 +15,6 @@ const VALID_PROPERTIES = [
     "reservation_time",
     "people",
 ];
-
-function hasOnlyValidProperties(req, res, next) {
-    const { data = {} } = req.body;
-
-    const invalidFields = Object.keys(data).filter(
-        (field) => !VALID_PROPERTIES.includes(field)
-    );
-
-    if (invalidFields.length)
-        return next({
-            status: 400,
-            message: `Invalid field(s): ${invalidFields.join(", ")}`,
-        });
-    next();
-}
 
 /**
  * Validation to check for missing properties
@@ -49,6 +35,7 @@ async function propertiesExist(req, res, next) {
     res.locals.reservation_date = data.reservation_date;
     res.locals.reservation_time = data.reservation_time;
     res.locals.people = data.people;
+    res.locals.timezone = data.dateTime_timezone ? data.dateTime_timezone : "z";
     next();
 }
 
@@ -158,20 +145,20 @@ async function validDateTime(req, res, next) {
 
     const f = new Date(`${res.locals.reservation_date}T${res.locals.reservation_time}`);
 
-    const morning_minimum = new Date(`${res.locals.reservation_date}T10:30`);
+    // Timezone differential in milliseconds
 
+    const morning_minimum = new Date(`${res.locals.reservation_date}T10:30`);
     if (f.getTime() < morning_minimum.getTime()) {
         return next({
-            message: "We open at 10:30 AM",
+            message: `We open at 10:30 AM Local`,
             status: 400,
         })
     }
 
     const evening_maximum = new Date(`${res.locals.reservation_date}T21:30`);
-
     if (f.getTime() > evening_maximum.getTime()) {
         return next({
-            message: "Our kitchen closes at 9:30 PM",
+            message: `Our kitchen closes at 9:30 PM Local`,
             status: 400,
         })
     }
@@ -210,7 +197,14 @@ async function validPeople(req, res, next) {
  * Create handler for new reservations
  */
 async function create(req, res, next) {
-    const { data } = req.body;
+    const data = {
+        first_name: res.locals.first_name,
+        last_name: res.locals.last_name,
+        mobile_number: res.locals.mobile_number,
+        reservation_date: res.locals.reservation_date,
+        reservation_time: res.locals.reservation_time,
+        people: res.locals.people,
+    };
     const response = await reservationsService.create(data);
     res.status(201).json({ data: response });
 }
@@ -235,7 +229,6 @@ async function read(req, res, next) {
 
 module.exports = {
     create: [
-        hasOnlyValidProperties,
         asyncErrorBoundary(propertiesExist),
         asyncErrorBoundary(validFirstName),
         asyncErrorBoundary(validLastName),

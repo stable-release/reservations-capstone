@@ -82,10 +82,15 @@ export default function NewReservation() {
         if (!formData.reservation_date) {
             const currentTime = todayTime();
             const currentDate = todayDate();
+
+            const d = new Date();
+            let timezone = d.getTimezoneOffset();
+
             setFormData({
                 ...formData,
                 reservation_time: currentTime,
                 reservation_date: currentDate,
+                dateTime_timezone: timezone,
             });
         }
     }, [formData]);
@@ -103,11 +108,10 @@ export default function NewReservation() {
 
             // Date and Time Validation
             // By default, new Date() creates a Date object using time on local computer
-            // Date() object needs to be converted to UTC for accurate comparisons
             const d = new Date(`${reservation_date}T${reservation_time}`);
 
-            formattedDate = `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`;
-            formattedTime = `${addZero(d.getUTCHours())}:${addZero(d.getUTCMinutes())}`;
+            formattedDate = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate() < 10 ? "0" + d.getDate().toString() : d.getDate().toString()}`;
+            formattedTime = `${addZero(d.getHours())}:${addZero(d.getMinutes())}`;
 
             // Open at 10:30 AM
             const morning_minimum = new Date(`${reservation_date}T10:30`);
@@ -142,11 +146,6 @@ export default function NewReservation() {
                 });
             }
 
-            if (errArr.length) {
-                setFormDataError(() => [...errArr]);
-                return false;
-            }
-
             // Phone validation
             const phone = formData.mobile_number;
             let finalString = "";
@@ -160,10 +159,18 @@ export default function NewReservation() {
             }
 
             if (finalString.length !== 12) {
-                return false;
+                errArr.push({
+                    key: "Phone",
+                    message: "Phone must have at least 12 digits",
+                });
             }
 
             formattedNumber = finalString;
+
+            if (errArr.length) {
+                setFormDataError(() => [...errArr]);
+                return false;
+            }
 
             return true;
         };
@@ -178,9 +185,8 @@ export default function NewReservation() {
                 reservation_date: formattedDate,
                 reservation_time: formattedTime,
             }
-            console.log(data);
 
-            createReservation(data).then(() =>
+            createReservation(data).then(console.log).then(() =>
                 history.push(`/dashboard?date=${formattedDate}`)
             ).catch((error) => setResponseError(error));
         } else if (submitted === 2) {
