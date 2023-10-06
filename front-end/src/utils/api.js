@@ -68,6 +68,11 @@ export async function listReservations(params, signal) {
         .then(formatReservationTime);
 }
 
+/**
+ * POST Call to create a new reservation
+ * @param {reservation} params 
+ * @returns {Promise<reservation>}
+ */
 export async function createReservation(params) {
     const abortController = new AbortController();
     try {
@@ -99,6 +104,11 @@ export async function createReservation(params) {
     }
 }
 
+/**
+ * GET Call to retrieve all reservations for a date ordered by time
+ * @param {Date} date
+ * @returns {Promise<[reservation]>}
+ */
 export async function listDateReservations(date) {
     const abortController = new AbortController();
     try {
@@ -115,6 +125,11 @@ export async function listDateReservations(date) {
     }
 }
 
+/**
+ * GET Call to retrieve a reservation by ID
+ * @param {Number} id
+ * @returns {reservation}
+ */
 export async function listIDReservation(id) {
     const abortController = new AbortController();
     try {
@@ -131,6 +146,11 @@ export async function listIDReservation(id) {
     }
 }
 
+/**
+ * POST Call to create a new table entry
+ * @param {table} params 
+ * @returns {Promise<table>}
+ */
 export async function createTable(params) {
     const abortController = new AbortController();
     try {
@@ -162,6 +182,10 @@ export async function createTable(params) {
     }
 }
 
+/**
+ * GET Call for all tables
+ * @returns {Array<table>}
+ */
 export async function listAllTables() {
     const abortController = new AbortController();
     try {
@@ -180,8 +204,9 @@ export async function listAllTables() {
 
 /**
  * PUT Call to link table with reservation
- * @param {data} params 
+ * @param {table} params 
  * @param {number} table_id 
+ * @returns {Promise<table>}
  */
 export async function assignTableToReservation(params, table_id) {
     const abortController = new AbortController();
@@ -199,6 +224,43 @@ export async function assignTableToReservation(params, table_id) {
 
         const response = await fetch(`${API_BASE_URL}/tables/${table_id}/seat`, {
             method: "PUT",
+            body: bodyContent,
+            headers: headers,
+        });
+
+        const payload = await response.json();
+
+        if (payload.error) {
+            return Promise.reject({ message: payload.error });
+        }
+        return payload.data;
+    } catch (err) {
+        abortController.abort(err);
+    }
+}
+
+/**
+ * 
+ * @param {table_id} params
+ * @param {number} table_id 
+ * @returns {Promise<number>}
+ */
+export async function deleteTable(params, table_id) {
+    const abortController = new AbortController();
+    try {
+        const headers = {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+        };
+
+        const bodyContent = JSON.stringify({
+            data: {
+                ...params,
+            },
+        });
+
+        const response = await fetch(`${API_BASE_URL}/tables/${table_id}/seat`, {
+            method: "DELETE",
             body: bodyContent,
             headers: headers,
         });

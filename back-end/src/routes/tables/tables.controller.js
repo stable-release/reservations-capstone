@@ -24,6 +24,7 @@ async function propertiesExist(req, res, next) {
     }
     res.locals.table_name = data.table_name;
     res.locals.capacity = data.capacity;
+    res.locals.reservation_id = data.reservation_id ? data.reservation_id : null;
     next();
 }
 
@@ -139,7 +140,8 @@ async function isAvailable(req, res, next) {
 async function create(req, res, next) {
     const data = {
         table_name: res.locals.table_name,
-        capacity: res.locals.capacity
+        capacity: res.locals.capacity,
+        reservation_id: res.locals.reservation_id
     }
     const response = await tablesService.create(data);
     res.status(201).json({data: response});
@@ -158,6 +160,27 @@ async function update(req, res, next) {
     const reservation_id = res.locals.reservation.reservation_id;
     const response = await tablesService.update(table_id, reservation_id);
     res.status(200).json(response);
+}
+
+/**
+ * Deletes reservation with table_id
+ */
+async function del(req, res, next) {
+    // Return error if seats are unoccupied
+    const table = res.locals.table;
+    if (!table.reservation_id) {
+        return next({
+            message: `Seats not occupied for table_id ${table.table_id}`,
+            status: 400,
+        });
+    }
+
+    // Try deleting reservation
+    const table_id = res.locals.table_id;
+    const response = await tablesService.del(table_id);
+    if (response) {
+        res.sendStatus(200);
+    }
 }
 
 /**
@@ -181,5 +204,6 @@ module.exports = {
         asyncErrorBoundary(isAvailable),
         asyncErrorBoundary(update),
     ],
+    delete: [asyncErrorBoundary(tableExists), asyncErrorBoundary(del)],
     list: [asyncErrorBoundary(list)],
 };

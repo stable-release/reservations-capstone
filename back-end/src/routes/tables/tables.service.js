@@ -40,6 +40,16 @@ async function update(table_id, reservation_id) {
 }
 
 /**
+ * @param {number} table_id
+ * Deletes a single table entry reservation
+ */
+async function del(table_id) {
+    return knex("tables").where("table_id", table_id).update({
+        reservation_id: null
+    });
+}
+
+/**
  * Lists out all tables
  */
 async function list() {
@@ -52,5 +62,6 @@ module.exports = {
     read,
     readReservation,
     update,
+    del,
     list,
 };
