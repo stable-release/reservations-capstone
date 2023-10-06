@@ -5,7 +5,7 @@ const today = require("../../utils/today");
 const { addZero } = require("../../utils/addZero");
 
 /**
- * Property validation containing only VALID_PROPERTIES
+ * Property validation containing only VALID_PROPERTIES for create
  */
 const VALID_PROPERTIES = [
     "first_name",
@@ -129,21 +129,23 @@ async function validDateTime(req, res, next) {
     const d = new Date(
         `${res.locals.reservation_date}T${res.locals.reservation_time}z`
     );
-    
+
     if (d.getDay() === 2) {
         return next({
             message: "Sorry, we're closed on Tuesdays",
             status: 400,
-        })
+        });
     }
     if (Date.now() >= d.getTime()) {
         return next({
             message: "Reservation must be in the future",
             status: 400,
-        })
+        });
     }
 
-    const f = new Date(`${res.locals.reservation_date}T${res.locals.reservation_time}`);
+    const f = new Date(
+        `${res.locals.reservation_date}T${res.locals.reservation_time}`
+    );
 
     // Timezone differential in milliseconds
 
@@ -152,7 +154,7 @@ async function validDateTime(req, res, next) {
         return next({
             message: `We open at 10:30 AM Local`,
             status: 400,
-        })
+        });
     }
 
     const evening_maximum = new Date(`${res.locals.reservation_date}T21:30`);
@@ -160,7 +162,7 @@ async function validDateTime(req, res, next) {
         return next({
             message: `Our kitchen closes at 9:30 PM Local`,
             status: 400,
-        })
+        });
     }
 
     next();
@@ -219,12 +221,38 @@ async function dateExists(req, res, next) {
 }
 
 /**
- * Read handler for a single reservation
- * @returns Array of reservations : Empty array
+ * Reservation_id query validation
+ */
+async function reservationIdExists(req, res, next) {
+    const { reservation_id } = req.params;
+    const response = await reservationsService.readById(reservation_id);
+    if (response[0]) {
+        res.locals.reservation = response[0];
+        res.locals.reservation_id = response[0].reservation_id;
+        return next();
+    }
+    next({
+        message: `Reservation for reservation_id ${reservation_id} does not exist`,
+        status: 400
+    })
+}
+
+/**
+ * Read handler for a single reservation by date
+ * @returns {[]} Array of reservations : Empty array
  */
 async function read(req, res, next) {
     const response = await reservationsService.read(res.locals.date);
     res.status(200).json({ data: response });
+}
+
+/**
+ * Read handler for a single reservation by reservation_id
+ * @returns {[]} Single reservation : Empty array
+ */
+async function readReservationId(req, res, next) {
+    const reservation = res.locals.reservation;
+    res.status(200).json({data: reservation})
 }
 
 module.exports = {
@@ -240,4 +268,8 @@ module.exports = {
         asyncErrorBoundary(create),
     ],
     read: [dateExists, asyncErrorBoundary(read)],
+    readId: [
+        asyncErrorBoundary(reservationIdExists),
+        asyncErrorBoundary(readReservationId),
+    ],
 };

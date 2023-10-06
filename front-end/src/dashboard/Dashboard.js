@@ -3,9 +3,10 @@ import { listDateReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { Link } from "react-router-dom";
 import { today, previous, next } from "../utils/date-time";
-import ReservationCard from "./ReservationCard";
+import ReservationCard from "../layout/reservations/ReservationCard";
 import useQuery from "../utils/useQuery";
 import "./Dashboard.css";
+import ListTables from "../layout/tables/ListTables";
 
 /**
  * Defines the dashboard page.
@@ -44,6 +45,7 @@ function Dashboard() {
                   return (
                       <ReservationCard
                           key={singleReservation.reservation_id}
+                          id={singleReservation.reservation_id}
                           first={singleReservation.first_name}
                           last={singleReservation.last_name}
                           time={singleReservation.reservation_time}
@@ -89,16 +91,20 @@ function Dashboard() {
                         <tr>
                             <th>First Name</th>
                             <th>Last Name</th>
-                            <th>Reservation Time (UTC)</th>
-                            <th>Reservation Date (UTC)</th>
+                            <th>Reservation Time</th>
+                            <th>Reservation Date</th>
                             <th>Number of People</th>
                             <th>Contact Number</th>
+                            <th>Table</th>
                         </tr>
                         {resList}
                     </tbody>
                 </table>
             </div>
             <ErrorAlert error={reservationsError} />
+            <div className="d-md-flex mb-3">
+                <ListTables />
+            </div>
         </main>
     );
 }

@@ -5,6 +5,9 @@ import ReservationForm from "../forms/ReservationForm";
 import ErrorAlert from "../ErrorAlert";
 const { addZero } = require("../../utils/addZero");
 
+/**
+ * Helper functions to return Date and Time
+ */
 function todayDate() {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${
@@ -69,6 +72,9 @@ export default function NewReservation() {
         });
     };
 
+    /**
+     * Form error components
+     */
     const errorAlerts = formDataError
         ? formDataError.map((err) => {
               return <ErrorAlert key={err.key} error={err} />;
@@ -102,7 +108,7 @@ export default function NewReservation() {
         let formattedNumber = "";
         let formattedDate = "";
         let formattedTime = "";
-        
+
         const validateForm = (reservation_date, reservation_time) => {
             const errArr = [];
 
@@ -110,8 +116,14 @@ export default function NewReservation() {
             // By default, new Date() creates a Date object using time on local computer
             const d = new Date(`${reservation_date}T${reservation_time}`);
 
-            formattedDate = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate() < 10 ? "0" + d.getDate().toString() : d.getDate().toString()}`;
-            formattedTime = `${addZero(d.getHours())}:${addZero(d.getMinutes())}`;
+            formattedDate = `${d.getFullYear()}-${d.getMonth() + 1}-${
+                d.getDate() < 10
+                    ? "0" + d.getDate().toString()
+                    : d.getDate().toString()
+            }`;
+            formattedTime = `${addZero(d.getHours())}:${addZero(
+                d.getMinutes()
+            )}`;
 
             // Open at 10:30 AM
             const morning_minimum = new Date(`${reservation_date}T10:30`);
@@ -119,8 +131,8 @@ export default function NewReservation() {
             if (d.getTime() < morning_minimum.getTime()) {
                 errArr.push({
                     key: "Time",
-                    message: "We open at 10:30 AM"
-                })
+                    message: "We open at 10:30 AM",
+                });
             }
 
             // Close at 9:30 PM
@@ -128,10 +140,11 @@ export default function NewReservation() {
             if (d.getTime() > evening_maximum.getTime()) {
                 errArr.push({
                     key: "Time",
-                    message: "Our kitchen closes at 9:30 PM"
-                })
+                    message: "Our kitchen closes at 9:30 PM",
+                });
             }
 
+            // Close on Tuesdays
             if (d.getDay() === 2) {
                 errArr.push({
                     key: "Closed",
@@ -139,6 +152,7 @@ export default function NewReservation() {
                 });
             }
 
+            // Date should be in the future
             if (Date.now() >= d.getTime()) {
                 errArr.push({
                     key: "Past",
@@ -158,6 +172,7 @@ export default function NewReservation() {
                 }
             }
 
+            // Phone number should have only 12 numbers within string
             if (finalString.length !== 12) {
                 errArr.push({
                     key: "Phone",
@@ -165,6 +180,7 @@ export default function NewReservation() {
                 });
             }
 
+            // Change phone number to valid API call format
             formattedNumber = finalString;
 
             if (errArr.length) {
@@ -175,6 +191,7 @@ export default function NewReservation() {
             return true;
         };
 
+        // Submit condition
         if (
             submitted === 1 &&
             validateForm(formData.reservation_date, formData.reservation_time)
@@ -184,15 +201,18 @@ export default function NewReservation() {
                 mobile_number: formattedNumber,
                 reservation_date: formattedDate,
                 reservation_time: formattedTime,
-            }
+            };
 
-            createReservation(data).then(console.log).then(() =>
-                history.push(`/dashboard?date=${formattedDate}`)
-            ).catch((error) => setResponseError(error));
-        } else if (submitted === 2) {
+            createReservation(data)
+                .then(() => history.push(`/dashboard?date=${formattedDate}`))
+                .catch((error) => setResponseError(error));
+        }
+        // Cancel condition
+        else if (submitted === 2) {
             history.goBack();
         }
 
+        // Clean Up
         return () => setSubmitted(() => 0);
     }, [submitted, history, formData, formDataError]);
 

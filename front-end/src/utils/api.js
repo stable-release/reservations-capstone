@@ -114,3 +114,102 @@ export async function listDateReservations(date) {
         abortController.abort(err);
     }
 }
+
+export async function listIDReservation(id) {
+    const abortController = new AbortController();
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/reservations/${id}`,
+            {
+                method: "GET",
+            }
+        );
+        const { data } = await response.json();
+        return data;
+    } catch (err) {
+        abortController.abort(err);
+    }
+}
+
+export async function createTable(params) {
+    const abortController = new AbortController();
+    try {
+        const headers = {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+        };
+
+        const bodyContent = JSON.stringify({
+            data: {
+                ...params,
+            },
+        });
+
+        const response = await fetch(`${API_BASE_URL}/tables`, {
+            method: "POST",
+            body: bodyContent,
+            headers: headers,
+        });
+
+        const payload = await response.json();
+
+        if (payload.error) {
+            return Promise.reject({ message: payload.error });
+        }
+        return payload.data;
+    } catch (err) {
+        abortController.abort(err);
+    }
+}
+
+export async function listAllTables() {
+    const abortController = new AbortController();
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/tables`,
+            {
+                method: "GET",
+            }
+        );
+        const { data } = await response.json();
+        return data;
+    } catch (err) {
+        abortController.abort(err);
+    }
+}
+
+/**
+ * PUT Call to link table with reservation
+ * @param {data} params 
+ * @param {number} table_id 
+ */
+export async function assignTableToReservation(params, table_id) {
+    const abortController = new AbortController();
+    try {
+        const headers = {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+        };
+
+        const bodyContent = JSON.stringify({
+            data: {
+                ...params,
+            },
+        });
+
+        const response = await fetch(`${API_BASE_URL}/tables/${table_id}/seat`, {
+            method: "PUT",
+            body: bodyContent,
+            headers: headers,
+        });
+
+        const payload = await response.json();
+
+        if (payload.error) {
+            return Promise.reject({ message: payload.error });
+        }
+        return payload.data;
+    } catch (err) {
+        abortController.abort(err);
+    }
+}

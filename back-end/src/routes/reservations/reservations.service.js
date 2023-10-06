@@ -19,6 +19,15 @@ async function read(date) {
 }
 
 /**
+ * 
+ * @param {Number} reservation_id
+ * Searches for single reservation by reservation_id
+ */
+async function readById(reservation_id) {
+    return knex("reservations").select("*").where("reservation_id", reservation_id);
+}
+
+/**
  * Lists out all reservations
  */
 async function list() {
@@ -28,5 +37,6 @@ async function list() {
 module.exports = {
     create,
     read,
+    readById,
     list
 }
