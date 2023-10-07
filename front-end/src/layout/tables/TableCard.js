@@ -19,7 +19,6 @@ export default function TableCard({
     // Otherwise, show free
     const finish = reservation_id ? (
         <button
-            data-table-id-status={`${id}`}
             data-table-id-finish={`${id}`}
             style={{ width: "70%" }}
             onClick={() => handleFinish(id)}
@@ -34,15 +33,15 @@ export default function TableCard({
             <td>{name}</td>
             <td>{capacity}</td>
             <td
-                data-table-id-status={`${id}`}
                 style={{
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                 }}
+                data-table-id-status={`${id}`}
             >
-                <p data-table-id-status={`${id}`}>
-                {reservation_id ? "occupied" : "free"} 
+                <p>
+                {reservation_id ? "occupied" : "free"}
                 </p>
                 {finish}
             </td>

@@ -10,5 +10,6 @@ const methodNotAllowed = require("../../errors/methodNotAllowed");
 
 router.route("/").all(cors()).get(controller.read).post(controller.create).all(methodNotAllowed);
 router.route("/:reservation_id").all(cors()).get(controller.readId).all(methodNotAllowed);
+router.route("/:reservation_id/status").all(cors()).put(controller.update).all(methodNotAllowed);
 
 module.exports = router;

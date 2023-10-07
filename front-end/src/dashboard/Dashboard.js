@@ -22,11 +22,20 @@ function Dashboard() {
     const [reservationsError, setReservationsError] = useState(null);
 
     /**
+     * 0 default
+     * 1 delete
+     */
+    const [deleted, setDeleted] = useState({
+        state: 0,
+        table_id: Number(""),
+    });
+
+    /**
      * Set date to query date
      */
     useEffect(() => {
         if (!queryDate) {
-            setDate(today())
+            setDate(today());
         }
     }, [queryDate]);
 
@@ -37,7 +46,7 @@ function Dashboard() {
         listDateReservations(date)
             .then(setReservations)
             .catch(setReservationsError);
-    }, [date]);
+    }, [date, deleted]);
 
     const resList =
         reservations && reservations.length
@@ -52,6 +61,7 @@ function Dashboard() {
                           date={date}
                           people={singleReservation.people}
                           contact={singleReservation.mobile_number}
+                          status={singleReservation.status}
                       />
                   );
               })
@@ -96,6 +106,7 @@ function Dashboard() {
                             <th>Number of People</th>
                             <th>Contact Number</th>
                             <th>Table</th>
+                            <th>Status</th>
                         </tr>
                         {resList}
                     </tbody>
@@ -103,7 +114,7 @@ function Dashboard() {
             </div>
             <ErrorAlert error={reservationsError} />
             <div className="d-md-flex mb-3">
-                <ListTables />
+                <ListTables deleted={deleted} setDeleted={setDeleted} />
             </div>
         </main>
     );

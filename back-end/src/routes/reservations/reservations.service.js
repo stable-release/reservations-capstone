@@ -15,7 +15,7 @@ async function create(data) {
  * Searches all matches with date of reservation
  */
 async function read(date) {
-    return knex("reservations").select("*").where("reservation_date", date).orderBy("reservation_time");
+    return knex("reservations").select("*").where("reservation_date", date).whereNot("status", "finished").orderBy("reservation_time");
 }
 
 /**
@@ -25,6 +25,10 @@ async function read(date) {
  */
 async function readById(reservation_id) {
     return knex("reservations").select("*").where("reservation_id", reservation_id);
+}
+
+async function update(reservation_id, status) {
+    return knex("reservations").where("reservation_id", reservation_id).update("status", status);
 }
 
 /**
@@ -38,5 +42,6 @@ module.exports = {
     create,
     read,
     readById,
+    update,
     list
 }

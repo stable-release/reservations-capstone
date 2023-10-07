@@ -275,3 +275,40 @@ export async function deleteTable(params, table_id) {
         abortController.abort(err);
     }
 }
+
+/**
+ * PUT Call to update reservation status
+ * @param {reservation} params 
+ * @param {number} reservation_id 
+ * @returns {Promise<status>}
+ */
+export async function updateReservationStatus(params, reservation_id) {
+    const abortController = new AbortController();
+    try {
+        const headers = {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+        };
+
+        const bodyContent = JSON.stringify({
+            data: {
+                ...params,
+            },
+        });
+
+        const response = await fetch(`${API_BASE_URL}/reservations/${reservation_id}/status`, {
+            method: "PUT",
+            body: bodyContent,
+            headers: headers,
+        });
+
+        const payload = await response.json();
+
+        if (payload.error) {
+            return Promise.reject({ message: payload.error });
+        }
+        return payload.data;
+    } catch (err) {
+        abortController.abort(err);
+    }
+}
