@@ -6,7 +6,6 @@ import {
     assignTableToReservation,
     listAllTables,
     listIDReservation,
-    updateReservationStatus,
 } from "../../utils/api";
 import { today } from "../../utils/date-time";
 
@@ -77,14 +76,7 @@ export default function Seat() {
             const data = {
                 reservation_id: reservation.reservation_id,
             };
-            const status = {
-                reservation_id: reservation.reservation_id,
-                status: "seated",
-            };
             assignTableToReservation(data, selection)
-                .then(
-                    updateReservationStatus(status, reservation.reservation_id)
-                )
                 .then(() => history.push(`/dashboard?date=${today()}`))
                 .catch((error) => setResponseError(error));
         }

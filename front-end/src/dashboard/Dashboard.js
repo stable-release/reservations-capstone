@@ -18,17 +18,9 @@ function Dashboard() {
     const queryDate = useQuery().get("date");
     const [date, setDate] = useState(queryDate);
 
+    const [refresh, setRefresh] = useState(false);
     const [reservations, setReservations] = useState([]);
     const [reservationsError, setReservationsError] = useState(null);
-
-    /**
-     * 0 default
-     * 1 delete
-     */
-    const [deleted, setDeleted] = useState({
-        state: 0,
-        table_id: Number(""),
-    });
 
     /**
      * Set date to query date
@@ -46,7 +38,7 @@ function Dashboard() {
         listDateReservations(date)
             .then(setReservations)
             .catch(setReservationsError);
-    }, [date, deleted]);
+    }, [date, refresh]);
 
     const resList =
         reservations && reservations.length
@@ -114,7 +106,7 @@ function Dashboard() {
             </div>
             <ErrorAlert error={reservationsError} />
             <div className="d-md-flex mb-3">
-                <ListTables deleted={deleted} setDeleted={setDeleted} />
+                <ListTables setRefresh={setRefresh} />
             </div>
         </main>
     );

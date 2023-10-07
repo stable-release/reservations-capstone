@@ -1,19 +1,23 @@
 import { useState, useEffect } from "react";
-import {
-    deleteTable,
-    listAllTables,
-    updateReservationStatus,
-} from "../../utils/api";
+import { deleteTable, listAllTables } from "../../utils/api";
 import ErrorAlert from "../ErrorAlert";
 import TableCard from "./TableCard";
 
 import "./ListTables.css";
 
-export default function ListTables({ deleted, setDeleted }) {
+export default function ListTables({ setRefresh }) {
     const [tables, setTables] = useState([]);
     const [tablesError, setTablesError] = useState(null);
     const [responseError, setResponseError] = useState(null);
-    const [load, setLoad] = useState(false);
+
+    /**
+     * 0 default
+     * 1 delete
+     */
+    const [deleted, setDeleted] = useState({
+        state: 0,
+        table_id: Number(""),
+    });
 
     /**
      * Handle delete for single table
@@ -22,10 +26,19 @@ export default function ListTables({ deleted, setDeleted }) {
         setDeleted({
             state: 1,
             table_id: id,
-            reservation_id: tables.find(
-                (table, index, obj) => table.table_id === id
-            ).reservation_id,
         });
+    };
+
+    // Handle finish event with confirmation
+    const handleFinish = (id) => {
+        if (
+            window.confirm(
+                "Is this table ready to seat new guests? This cannot be undone."
+            )
+        ) {
+            handleDelete(id);
+        } else {
+        }
     };
 
     const list =
@@ -39,6 +52,7 @@ export default function ListTables({ deleted, setDeleted }) {
                           capacity={singleTable.capacity}
                           reservation_id={singleTable.reservation_id}
                           handleDelete={handleDelete}
+                          handleFinish={handleFinish}
                       />
                   );
               })
@@ -48,8 +62,10 @@ export default function ListTables({ deleted, setDeleted }) {
      * GET Request for current tables
      */
     useEffect(() => {
-        listAllTables().then(setTables).catch(setTablesError);
-    }, [load]);
+        if (deleted.state === 0) {
+            listAllTables().then(setTables).catch(setTablesError);
+        }
+    }, [deleted.state]);
 
     /**
      * DELETE Request for table with table_id
@@ -59,24 +75,17 @@ export default function ListTables({ deleted, setDeleted }) {
             const data = {
                 table_id: deleted.table_id,
             };
-            const status = {
-                reservation_id: deleted.reservation_id,
-                status: "finished",
-            };
             deleteTable(data, data.table_id)
-                .then(() =>
-                    updateReservationStatus(status, status.reservation_id)
-                )
+                .then(() => setRefresh((prev) => !prev))
                 .then(() =>
                     setDeleted({
-                        ...deleted,
+                        table_id: 0,
                         state: 0,
                     })
                 )
-                .then((prev) => setLoad(!prev))
                 .catch((error) => setResponseError(error));
         }
-    }, [deleted, setDeleted]);
+    }, [deleted, setRefresh]);
 
     return (
         <div className="tables">

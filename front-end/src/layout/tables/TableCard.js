@@ -3,18 +3,8 @@ export default function TableCard({
     name,
     capacity,
     reservation_id,
-    handleDelete,
+    handleFinish
 }) {
-
-    // Handle finish event with confirmation
-    const handleFinish = (id) => {
-        if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {
-            handleDelete(id)
-        } else {
-
-        }
-    };
-
     // If table is occupied, show finish button
     // Otherwise, show free
     const finish = reservation_id ? (
@@ -38,10 +28,9 @@ export default function TableCard({
                     flexDirection: "column",
                     alignItems: "center",
                 }}
-                data-table-id-status={`${id}`}
             >
-                <p>
-                {reservation_id ? "occupied" : "free"}
+                <p data-table-id-status={`${id}`}>
+                {reservation_id ? "occupied" : "free"} 
                 </p>
                 {finish}
             </td>
