@@ -205,8 +205,8 @@ async function validStatus(req, res, next) {
     if (status === "seated" || status === "finished") {
         return next({
             message: `Status is ${status}, status must be "booked"`,
-            status: 400
-        })
+            status: 400,
+        });
     }
     next();
 }
@@ -225,6 +225,19 @@ async function create(req, res, next) {
     };
     const response = await reservationsService.create(data);
     res.status(201).json({ data: response });
+}
+
+/**
+ * Lists reservations matching partial or complete mobile number
+ * @returns {[]} Array of reservations : Empty array
+ */
+async function mobileNumberExists(req, res, next) {
+    const { mobile_number } = req.query;
+    if (!mobile_number) {
+        return next();
+    }
+    const response = await reservationsService.listByMobile(mobile_number);
+    res.json({data: response ? response : []});
 }
 
 /**
@@ -249,8 +262,8 @@ async function reservationIdExists(req, res, next) {
     }
     next({
         message: `Reservation for reservation_id ${reservation_id} does not exist`,
-        status: 404
-    })
+        status: 404,
+    });
 }
 
 /**
@@ -268,7 +281,7 @@ async function read(req, res, next) {
  */
 async function readReservationId(req, res, next) {
     const reservation = res.locals.reservation;
-    res.status(200).json({data: reservation})
+    res.status(200).json({ data: reservation });
 }
 
 /**
@@ -290,16 +303,15 @@ async function validReservationStatus(req, res, next) {
         return next({
             message: "A finished reservation cannot be updated",
             status: 400,
-        })
+        });
     }
 
-
     // Updated status must be "booked", "seated", "finished"
-    if (!["booked","seated", "finished"].includes(res.locals.status)) {
+    if (!["booked", "seated", "finished"].includes(res.locals.status)) {
         return next({
             message: "Status unknown",
-            status: 400
-        })
+            status: 400,
+        });
     }
 
     next();
@@ -307,12 +319,28 @@ async function validReservationStatus(req, res, next) {
 
 /**
  * Updates reservation status
+ * @returns {data} Data object containing status
  */
 async function updateStatus(req, res, next) {
-    const response = await reservationsService.update(res.locals.reservation_id, res.locals.status);
-    res.status(200).json({data: {
-        status: res.locals.status
-    }});
+    const response = await reservationsService.update(
+        res.locals.reservation_id,
+        res.locals.status
+    );
+    res.status(200).json({
+        data: {
+            status: res.locals.status,
+        },
+    });
+}
+
+/**
+ * Lists reservations matching partial or complete mobile number
+ * @returns {[]} Array of reservations : Empty array
+ */
+async function listSearchMobileNumber(req, res, next) {
+    const mobile_number = res.locals.mobile_number;
+    const response = await reservationsService.listByMobile(mobile_number);
+    res.json(response);
 }
 
 module.exports = {
@@ -328,7 +356,11 @@ module.exports = {
         asyncErrorBoundary(validStatus),
         asyncErrorBoundary(create),
     ],
-    read: [dateExists, asyncErrorBoundary(read)],
+    read: [
+        asyncErrorBoundary(mobileNumberExists),
+        dateExists,
+        asyncErrorBoundary(read),
+    ],
     readId: [
         asyncErrorBoundary(reservationIdExists),
         asyncErrorBoundary(readReservationId),
@@ -338,5 +370,5 @@ module.exports = {
         asyncErrorBoundary(statusExists),
         asyncErrorBoundary(validReservationStatus),
         asyncErrorBoundary(updateStatus),
-    ]
+    ],
 };
