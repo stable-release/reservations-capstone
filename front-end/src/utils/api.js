@@ -240,7 +240,7 @@ export async function assignTableToReservation(params, table_id) {
 }
 
 /**
- * 
+ * DELETE Call for reservation
  * @param {table_id} params
  * @param {number} table_id 
  * @returns {Promise<number>}
@@ -302,6 +302,31 @@ export async function updateReservationStatus(params, reservation_id) {
             headers: headers,
         });
 
+        const payload = await response.json();
+
+        if (payload.error) {
+            return Promise.reject({ message: payload.error });
+        }
+        return payload.data;
+    } catch (err) {
+        abortController.abort(err);
+    }
+}
+
+/**
+ * GET Call to retrieve reservations matching mobile_number
+ * @param {String} mobile_number
+ * @returns {Array<reservations>}
+ */
+export async function listMobileNumberReservations(mobile_number) {
+    const abortController = new AbortController();
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/reservations?mobile_number=${mobile_number}`,
+            {
+                method: "GET",
+            }
+        );
         const payload = await response.json();
 
         if (payload.error) {

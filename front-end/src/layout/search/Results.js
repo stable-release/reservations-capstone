@@ -1,6 +1,6 @@
 const { addZero } = require("../../utils/addZero");
 
-export default function ReservationCard({
+export default function Results({
     id,
     first,
     last,
@@ -11,26 +11,18 @@ export default function ReservationCard({
     status,
 }) {
     // Format Date and Time correctly in dashboard
-    const DateUTC = new Date(`${date}T${time}`);
+    const preFormatDate = new Date(date);
+    const DateUTC = new Date(
+        `${`${preFormatDate.getFullYear()}-${
+            preFormatDate.getMonth() + 1
+        }-${preFormatDate.getDate()}`}T${time}`
+    );
     const formattedTime = `${addZero(DateUTC.getHours())}:${addZero(
         DateUTC.getMinutes()
     )}`;
     const formattedDate = `${DateUTC.getFullYear()}-${
         DateUTC.getMonth() + 1
     }-${DateUTC.getDate()}`;
-
-    // Seats
-    const seat = () => {
-        if (status === "booked") {
-            return (
-                <a href={`/reservations/${id}/seat`}>
-                    <button>Seat</button>
-                </a>
-            );
-        } else if (status === "seated") {
-            return null;
-        }
-    };
 
     return (
         <tr>
@@ -40,15 +32,8 @@ export default function ReservationCard({
             <td>{formattedDate}</td>
             <td>{people}</td>
             <td>{contact}</td>
-            <td>{seat()}</td>
             <td>
-                <p
-                    data-reservation-id-status={
-                        id
-                    }
-                >
-                    {status}
-                </p>
+                <p data-reservation-id-status={id}>{status}</p>
             </td>
         </tr>
     );
