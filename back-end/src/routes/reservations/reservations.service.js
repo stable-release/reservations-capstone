@@ -15,7 +15,7 @@ async function create(data) {
  * Searches all matches with date of reservation
  */
 async function read(date) {
-    return knex("reservations").select("*").where("reservation_date", date).whereNot("status", "finished").orderBy("reservation_time");
+    return knex("reservations").select("*").where("reservation_date", date).whereNot("status", "finished").whereNot("status", "cancelled").orderBy("reservation_time");
 }
 
 /**
@@ -35,6 +35,16 @@ async function readById(reservation_id) {
  */
 async function update(reservation_id, status) {
     return knex("reservations").where("reservation_id", reservation_id).update("status", status);
+}
+
+/**
+ * @param {Number} reservation_id
+ * @param {reservation} data
+ * Updates a single reservation entry
+ */
+async function updateReservation(reservation_id, data) {
+    return knex("reservations").where("reservation_id", reservation_id).update({...data}, 
+        ["reservation_id", "first_name", "last_name", "mobile_number", "people", "reservation_date", "reservation_time"]);
 }
 
 /**
@@ -63,6 +73,7 @@ module.exports = {
     read,
     readById,
     update,
+    updateReservation,
     list,
     listByMobile
 }

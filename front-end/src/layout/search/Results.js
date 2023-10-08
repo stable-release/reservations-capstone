@@ -15,7 +15,11 @@ export default function Results({
     const DateUTC = new Date(
         `${`${preFormatDate.getFullYear()}-${
             preFormatDate.getMonth() + 1
-        }-${preFormatDate.getDate()}`}T${time}`
+        }-${
+            preFormatDate.getDate() < 10
+                ? "0" + preFormatDate.getDate().toString()
+                : preFormatDate.getDate().toString()
+        }`}T${time}`
     );
     const formattedTime = `${addZero(DateUTC.getHours())}:${addZero(
         DateUTC.getMinutes()
@@ -23,7 +27,7 @@ export default function Results({
     const formattedDate = `${DateUTC.getFullYear()}-${
         DateUTC.getMonth() + 1
     }-${DateUTC.getDate()}`;
-
+    
     return (
         <tr>
             <td>{first}</td>

@@ -54,6 +54,7 @@ function Dashboard() {
                           people={singleReservation.people}
                           contact={singleReservation.mobile_number}
                           status={singleReservation.status}
+                          setRefresh={setRefresh}
                       />
                   );
               })
@@ -99,6 +100,7 @@ function Dashboard() {
                             <th>Contact Number</th>
                             <th>Table</th>
                             <th>Status</th>
+                            <th>Edit / Cancel</th>
                         </tr>
                         {resList}
                     </tbody>

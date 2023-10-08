@@ -29,6 +29,7 @@ async function propertiesExist(req, res, next) {
             });
         }
     }
+
     res.locals.first_name = data.first_name;
     res.locals.last_name = data.last_name;
     res.locals.mobile_number = data.mobile_number;
@@ -68,10 +69,23 @@ async function validLastName(req, res, next) {
 }
 
 /**
- * Mobile Phone number not empty
+ * Mobile Phone number not empty and is length of 12
  */
 async function validPhone(req, res, next) {
     if (res.locals.mobile_number && res.locals.mobile_number.length === 12) {
+        return next();
+    }
+    next({
+        message: "Property mobile_number is invalid",
+        status: 400,
+    });
+}
+
+/**
+ * Mobile Phone number not empty
+ */
+async function validPhoneOnlyEmpty(req, res, next) {
+    if (res.locals.mobile_number) {
         return next();
     }
     next({
@@ -90,6 +104,7 @@ async function validDate(req, res, next) {
             status: 400,
         });
     }
+
     const date = new Date(res.locals.reservation_date);
     if (date.getTime() !== date.getTime()) {
         return next({
@@ -128,9 +143,9 @@ async function validTime(req, res, next) {
  */
 async function validDateTime(req, res, next) {
     const d = new Date(
-        `${res.locals.reservation_date}T${res.locals.reservation_time}z`
+        `${res.locals.reservation_date}T${res.locals.reservation_time}`
     );
-
+    
     if (d.getDay() === 2) {
         return next({
             message: "Sorry, we're closed on Tuesdays",
@@ -237,7 +252,7 @@ async function mobileNumberExists(req, res, next) {
         return next();
     }
     const response = await reservationsService.listByMobile(mobile_number);
-    res.json({data: response ? response : []});
+    res.json({ data: response ? response : [] });
 }
 
 /**
@@ -307,7 +322,11 @@ async function validReservationStatus(req, res, next) {
     }
 
     // Updated status must be "booked", "seated", "finished"
-    if (!["booked", "seated", "finished"].includes(res.locals.status)) {
+    if (
+        !["booked", "seated", "finished", "cancelled"].includes(
+            res.locals.status
+        )
+    ) {
         return next({
             message: "Status unknown",
             status: 400,
@@ -334,13 +353,22 @@ async function updateStatus(req, res, next) {
 }
 
 /**
- * Lists reservations matching partial or complete mobile number
- * @returns {[]} Array of reservations : Empty array
+ * Updates a single reservation
+ * @returns {data} Data object containing reservation
  */
-async function listSearchMobileNumber(req, res, next) {
-    const mobile_number = res.locals.mobile_number;
-    const response = await reservationsService.listByMobile(mobile_number);
-    res.json(response);
+async function updateReservation(req, res, next) {
+    // Add non-null res.locals to data object
+    const data = {};
+    VALID_PROPERTIES.forEach((property) => {
+        if (res.locals[property]) {
+            data[property] = res.locals[property];
+        }
+    });
+    const response = await reservationsService.updateReservation(
+        res.locals.reservation_id,
+        data
+    );
+    res.status(200).json({ data: response[0] });
 }
 
 module.exports = {
@@ -370,5 +398,18 @@ module.exports = {
         asyncErrorBoundary(statusExists),
         asyncErrorBoundary(validReservationStatus),
         asyncErrorBoundary(updateStatus),
+    ],
+    updateReservation: [
+        asyncErrorBoundary(reservationIdExists),
+        asyncErrorBoundary(propertiesExist),
+        asyncErrorBoundary(validFirstName),
+        asyncErrorBoundary(validLastName),
+        asyncErrorBoundary(validPhoneOnlyEmpty),
+        asyncErrorBoundary(validDate),
+        asyncErrorBoundary(validTime),
+        asyncErrorBoundary(validDateTime),
+        asyncErrorBoundary(validPeople),
+        asyncErrorBoundary(validStatus),
+        asyncErrorBoundary(updateReservation),
     ],
 };

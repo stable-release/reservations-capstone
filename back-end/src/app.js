@@ -4,7 +4,7 @@ require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
 const express = require("express");
 
-const logger = require("./utils/logger");
+// const logger = require("./utils/logger");
 const errorHandler = require("./errors/errorHandler");
 const notFound = require("./errors/notFound");
 
@@ -13,7 +13,7 @@ const tablesRouter = require("./routes/tables/tables.router");
 
 const app = express();
 
-app.use(logger);
+// app.use(logger);
 app.use(express.json());
 
 app.use("/reservations", reservationsRouter);
