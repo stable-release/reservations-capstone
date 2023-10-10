@@ -3,22 +3,73 @@
 
 The Restaurant Reservations Application is a comprehensive management system that helps to handle and streamline reservations and seating at a restaurant. It allows users to make reservations, which are then managed and fulfilled by restaurant staff. This includes assigning reservations to specific tables, ensuring efficient utilization of the restaurant's seating capacity. The goal is to optimize the reservation and seating process, improving customer experience and restaurant operations.
 
-## Table of Contents
+Technologies used: React, Node, and Express
 
-- Set Up
-- API Documentation
+## Table of Contents
+- [Live Deploy on Render](#live-deploy)
+- [Setup](#setup)
+- [API Documentation](#api-documentation)
 
 ## Live Deploy
-- Front-end
-[https://reservations-frontend.onrender.com](https://reservations-frontend.onrender.com)
-- Back-end
-[https://reservations-backend.onrender.com](https://reservations-backend.onrender.com)
+- View Front-end here:
+  - [https://reservations-frontend.onrender.com](https://reservations-frontend.onrender.com)
+- View Back-end here:
+  - [https://reservations-backend.onrender.com](https://reservations-backend.onrender.com)
+
+## Setup
+### Prerequisites
+This project is setup as a monorepo.
+<br/> The frontend source is in `/front-end`. The backend source is in `/back-end`.
+<br/> Be sure that all relative paths start with the corresponding root.
+<br/> The project requires the following:
+- Node v16.X LTS (Recommended v16 LTS, some packages may break past v16)
+
+### Front End: Static Site
+1. To get started, set your API address in your `.env` file:
+```env
+REACT_APP_API_BASE_URL=http://localhost:5001
+```
+2. Install
+```console
+npm i -y
+```
+3. For local development, just run:
+```console
+npm run start
+```
+Alternatively, for production:
+```console
+npm run build
+```
+Built static site will be in `/build`
+
+### Back End: API
+1. To get started, set your raw PostgresQL server url `postgres://` in your `.env` file:
+```env
+DATABASE_URL=enter-your-production-database-url-here
+DATABASE_URL_DEVELOPMENT=enter-your-development-database-url-here
+DATABASE_URL_TEST=enter-your-test-database-url-here
+DATABASE_URL_PREVIEW=enter-your-preview-database-url-here
+LOG_LEVEL=info
+```
+2. Install
+```console
+npm i -y
+```
+3. For local development, just run:
+```console
+npm run start:dev
+```
+Alternatively, for production:
+```console
+NODE_ENV=production node src/server.js
+```
 
 ## API Documentation
 ### Overview
 Welcome to the Restaurant Reservations API! This API is designed to help restaurants integrate reservation management functionality into their applications
 
-### Partitions:
+### Sections:
 - [Reservation Object](#reservation--object)
 - [Table Object](#table--object)
 - [API Endpoints](#api-endpoints)
