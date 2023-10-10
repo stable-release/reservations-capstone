@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SearchForm from "../forms/SearchForm";
 import { listMobileNumberReservations } from "../../utils/api";
 import Results from "./Results";
+import "./Search.css";
 
 export default function Search() {
     const [mobileNumber, setMobileNumber] = useState("");
@@ -70,9 +71,9 @@ export default function Search() {
                 handleChange={handleChange}
                 mobile_number={mobileNumber}
             />
-            <div className="d-md-flex mb-3">
+            <div className="d-md-flex mb-3" style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%" }}>
-                    <tbody>
+                    <thead>
                         <tr>
                             <th>First Name</th>
                             <th>Last Name</th>
@@ -80,9 +81,11 @@ export default function Search() {
                             <th>Reservation Date</th>
                             <th>Number of People</th>
                             <th>Contact Number</th>
-                            <th>Status</th>
+                            <th style={{ right:"0", minWidth: "60px", position:"sticky", zIndex:"50", backgroundColor:"white" }}>Status</th>
                         </tr>
-                        {resList()}
+                    </thead>
+                    <tbody>
+                    {resList()}
                     </tbody>
                 </table>
             </div>

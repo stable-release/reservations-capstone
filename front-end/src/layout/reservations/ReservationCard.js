@@ -44,14 +44,14 @@ export default function ReservationCard({
     const editButton = () => {
         if (status === "booked") {
             return (
-                <a href={`/reservations/${id}/edit`}>
+                <a href={`/reservations/${id}/edit`} style={{ display: "flex", justifyContent:"center"}}>
                     <button>Edit</button>
                 </a>
             );
         } else {
             return null;
         }
-    }
+    };
 
     // Cancel handler
     const handleCancel = (event) => {
@@ -94,12 +94,40 @@ export default function ReservationCard({
             <td>{formattedTime}</td>
             <td>{formattedDate}</td>
             <td>{people}</td>
-            <td>{contact}</td>
-            <td>{seat()}</td>
-            <td>
+            <td style={{ minWidth: "120px" }}>{contact}</td>
+            <td
+                style={{
+                    right: "130px",
+                    position: "sticky",
+                    zIndex: "50",
+                    backgroundColor: "white",
+                }}
+            >
+                {seat()}
+            </td>
+            <td
+                style={{
+                    right: "70px",
+                    minWidth: "60px",
+                    position: "sticky",
+                    zIndex: "50",
+                    backgroundColor: "white",
+                }}
+            >
                 <p data-reservation-id-status={id}>{status}</p>
             </td>
-            <td>
+            <td
+                style={{
+                    right: "0",
+                    minWidth: "70px",
+                    position: "sticky",
+                    zIndex: "50",
+                    backgroundColor: "white",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                }}
+            >
                 {editButton()}
                 <button
                     data-reservation-id-cancel={`${id}`}
