@@ -12,7 +12,9 @@ function todayDate() {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${
         currentDate.getMonth() + 1
-    }-${currentDate.getDate()}`;
+    }-${currentDate.getDate() < 10
+        ? "0" + currentDate.getDate().toString()
+        : currentDate.getDate().toString()}`;
 }
 
 function todayTime() {
