@@ -8,7 +8,11 @@ The Restaurant Reservations Application is a comprehensive management system tha
 - Set Up
 - API Documentation
 
-## Installation
+## Live Deploy
+- Front-end
+[https://reservations-frontend.onrender.com](https://reservations-frontend.onrender.com)
+- Back-end
+[https://reservations-backend.onrender.com](https://reservations-backend.onrender.com)
 
 ## API Documentation
 ### Overview
