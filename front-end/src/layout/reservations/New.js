@@ -10,6 +10,7 @@ const { addZero } = require("../../utils/addZero");
  */
 function todayDate() {
     const currentDate = new Date();
+
     return `${currentDate.getFullYear()}-${
         currentDate.getMonth() + 1
     }-${currentDate.getDate() < 10
@@ -35,6 +36,7 @@ export default function NewReservation() {
         reservation_time: "00:00",
         people: Number(""),
     });
+    const [lock, setLock] = useState(1);
     const [formDataError, setFormDataError] = useState(null);
     const [responseError, setResponseError] = useState(null);
 
@@ -87,13 +89,15 @@ export default function NewReservation() {
      * Default Time & Date
      */
     useEffect(() => {
-        if (!formData.reservation_date) {
+        if (!formData.reservation_date && lock) {
+
             const currentTime = todayTime();
             const currentDate = todayDate();
 
             const d = new Date();
             let timezone = d.getTimezoneOffset();
-
+            
+            setLock(0);
             setFormData({
                 ...formData,
                 reservation_time: currentTime,
@@ -101,7 +105,7 @@ export default function NewReservation() {
                 dateTime_timezone: timezone,
             });
         }
-    }, [formData]);
+    }, [formData, lock]);
 
     /**
      * Create call to API
