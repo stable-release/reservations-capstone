@@ -36,13 +36,7 @@ export default function Results({
             <td>{formattedDate}</td>
             <td>{people}</td>
             <td>{contact}</td>
-            <td                 style={{
-                    right: "0",
-                    minWidth: "60px",
-                    position: "sticky",
-                    zIndex: "50",
-                    backgroundColor: "white",
-                }}>
+            <td>
                 <p data-reservation-id-status={id}>{status}</p>
             </td>
         </tr>
