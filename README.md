@@ -9,6 +9,8 @@ Technologies used: React, Node, and Express
 - [Live Deploy on Render](#live-deploy)
 - [Setup](#setup)
 - [API Documentation](#api-documentation)
+- [Walkthrough](#how-to-use)
+- [Tests](#tests)
 
 ## Live Deploy
 - View Front-end here:
@@ -67,7 +69,7 @@ NODE_ENV=production node src/server.js
 
 ## API Documentation
 ### Overview
-Welcome to the Restaurant Reservations API! This API is designed to help restaurants integrate reservation management functionality into their applications
+Welcome to the Restaurant Reservations API! This API is designed to help restaurants integrate reservation management functionality into their applications.
 
 ### Sections:
 - [Reservation Object](#reservation--object)
@@ -127,3 +129,108 @@ Welcome to the Restaurant Reservations API! This API is designed to help restaur
 | 201 | Request executed. |
 | 400 | Validation error. Check response.error object. |
 | 404 | Invalid URL parameter. Make sure URL parameters follow suggested format. |
+
+## How to use
+
+### Sections
+- [Creating a New Reservation](#new-reservation)
+- [Creating a New Table](#new-table)
+- [Dashboard Walkthrough](#dashboard)
+- [Assigning Tables](#assigning-tables)
+- [Editing or Cancelling](#editing-or-cancelling-reservations)
+- [Searching for Reservations](#search-for-reservations)
+
+### New Reservation
+1. Click "New Reservation"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/5dcd9362-684d-46b3-b4d4-0136cef89e7c)
+
+2. Fill form
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/997e58b5-af6b-4528-9c82-21cbc58b6519)
+
+3. Click "Submit" and you should see your new reservation
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/0df2c4d3-9bcd-463e-b180-3c44b92534eb)
+
+
+### New Table
+1. Click "New Table"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/516232ae-4ee5-405c-9c11-f9bb3fbf1853)
+
+2. Fill form
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/bc1a35fb-99c1-4f69-b4db-60df22b6d590)
+
+3. Click "Submit"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/9cac14af-7c56-49dc-9c34-7d15846f7cba)
+
+
+### Dashboard
+1. Click "Previous", "Today", "Next" to navigate reservations on each day.
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/08eac546-405d-4cc2-a070-bddd7cb01a37)
+
+2. For mobile users: Scroll right to see more details about each reservation
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/302d209d-2aa6-4d35-98bc-d067c5628f0c)
+
+### Assigning Tables
+1. Click "Seat"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/daad6a5f-5da4-4eba-9e79-0c5057e77078)
+
+2. Select an available table
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/be5d38a2-ab59-44bd-85bd-1618831dc86f)
+
+3. Click "Submit"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/184b5da6-159c-4060-a98b-3061c9c4b203)
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/5f223775-8d49-4dc9-a565-efa296096606)
+
+### Editing or Cancelling Reservations
+1. Click "Edit"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/ad06d6f6-bf6b-483b-9c5f-81b46cb69c43)
+
+
+2. Correct the reservation
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/36bb6553-6bcc-4d3d-8856-9f8aebb1d178)
+
+
+3. Click "Submit"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/b5330900-d020-41d8-b97e-4e592102d555)
+
+4. To cancel, click "Cancel"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/bcfeecb7-e9aa-411f-8145-8fbcfda62fff)
+
+5. Click "OK"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/b11c5eef-43e6-4840-949d-e08eaf573f31)
+
+### Search for Reservations
+1. Click "Search"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/8e62793a-1a22-4c56-a845-d3eb92a46ec2)
+
+2. Enter partial or complete mobile number
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/33004ea1-e0d2-4edc-bdf7-544df054f9e5)
+
+3. Click "Find"
+
+![image](https://github.com/stable-release/reservations-capstone/assets/126647604/e7642439-505e-4f22-bcd6-d41e767236c5)
+
+## Tests
+E2E tests:
+```console
+npm run test
+```
+Check `package.json` in `/front-end` and `/back-end` for more test commands.
