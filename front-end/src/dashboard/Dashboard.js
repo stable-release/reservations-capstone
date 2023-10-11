@@ -62,7 +62,10 @@ function Dashboard() {
 
     return (
         <main>
-            <h1>Dashboard</h1>
+            <div style={{ display:"flex", alignItems:"baseline"}}>
+                <h1 style={{ maxWidth: "50%"}}>Dashboard:</h1>
+                <h2 style={{ maxWidth: "50%"}}>&nbsp; {date}</h2>
+            </div>
             <div style={{ display: "flex" }}>
                 <Link
                     to={`/dashboard?date=${
@@ -89,7 +92,7 @@ function Dashboard() {
                 </Link>
             </div>
             <div className="d-md-flex mb-3" style={{ overflow: "auto" }}>
-            <table>
+                <table>
                     <thead>
                         <tr>
                             <th>First Name</th>
@@ -98,9 +101,38 @@ function Dashboard() {
                             <th>Reservation Date</th>
                             <th>Number of People</th>
                             <th>Contact Number</th>
-                            <th style={{ right:"130px", position:"sticky", zIndex:"50", backgroundColor:"white" }}>Table</th>
-                            <th style={{ right:"70px", minWidth: "60px", position:"sticky", zIndex:"50", backgroundColor:"white" }}>Status</th>
-                            <th style={{ right:"0", minWidth:"70px", position:"sticky", zIndex:"50", backgroundColor:"white" }}>Edit / Cancel</th>
+                            <th
+                                style={{
+                                    right: "130px",
+                                    position: "sticky",
+                                    zIndex: "50",
+                                    backgroundColor: "white",
+                                }}
+                            >
+                                Table
+                            </th>
+                            <th
+                                style={{
+                                    right: "70px",
+                                    minWidth: "60px",
+                                    position: "sticky",
+                                    zIndex: "50",
+                                    backgroundColor: "white",
+                                }}
+                            >
+                                Status
+                            </th>
+                            <th
+                                style={{
+                                    right: "0",
+                                    minWidth: "70px",
+                                    position: "sticky",
+                                    zIndex: "50",
+                                    backgroundColor: "white",
+                                }}
+                            >
+                                Edit / Cancel
+                            </th>
                         </tr>
                     </thead>
                     <tbody>{resList}</tbody>
